@@ -1,5 +1,7 @@
+import { IDebtsList } from './model';
 import { debts, users, debtsLists } from './data/debts';
 import * as express from 'express';
+import { Database, open } from 'sqlite';
 import * as cors from 'cors';
 import * as graphqlHTTP from 'express-graphql'
 import {
@@ -15,6 +17,8 @@ import {
     GraphQLInputObjectType,
     graphql
 } from 'graphql';
+
+let database: Database = null;
 
 const User = new GraphQLObjectType({
     name: "User",
@@ -46,6 +50,7 @@ const DebtsList = new GraphQLObjectType({
     description: "This represents a list of debts.",
     fields: () => ({
         _id: { type: new GraphQLNonNull(GraphQLString) },
+        title: { type: new GraphQLNonNull(GraphQLString) },
         members: { type: new GraphQLNonNull(new GraphQLList(User)) },
         debts: { type: new GraphQLList(Debt) },
         totalAmount: { type: new GraphQLNonNull(GraphQLFloat) },
@@ -59,6 +64,7 @@ const Query = new GraphQLObjectType({
         debtsLists: {
             type: new GraphQLList(DebtsList),
             resolve: () => {
+                // database.all("SELECT * FROM DebtsLists");
                 return debtsLists.map(debtsList => {
                     let totalAmount = debtsList.debts.reduce((a, b) => {
                         return a + b.amount;
@@ -80,19 +86,19 @@ const Query = new GraphQLObjectType({
         debts: {
             type: new GraphQLList(Debt),
             resolve: () => {
-                return debts;
+                return database.all("SELECT * FROM Debts LIMIT 10");
             }
         },
         users: {
             type: new GraphQLList(User),
             resolve: () => {
-                return debts;
+                return database.all("SELECT * FROM Users LIMIT 10");
             }
         },
         me: {
             type: User,
             resolve: () => {
-                return users[0];
+                return database.all("SELECT * FROM Users LIMIT 1");
             }
         }
     })
@@ -147,4 +153,13 @@ app.use('/graphql', graphqlHTTP({
     schema: Schema,
     graphiql: true
 }));
-app.listen(4001, () => console.log('Running a GraphQL API server at localhost:4001/graphql'));
+
+// First, try to open the database
+open('./database.sqlite3')
+    // Update db schema to the latest version using SQL-based migrations
+    .then(db => db.migrate({ force: 'last' }))
+    .then(db => database = db)
+    // Display error message if something went wrong
+    .catch((err) => console.error(err.stack))
+    // Finally, launch the Node.js app
+    .then(() => app.listen(4001, () => console.log('Running a GraphQL API server at localhost:4001/graphql')));

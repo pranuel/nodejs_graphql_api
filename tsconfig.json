@@ -1,18 +1,19 @@
 {
-  "compileOnSave": false,
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "outDir": "dist"
+  },
   "filesGlob": [
-    "./**/*.ts",
+    "./src/**/*.ts",
     "./typings/index.d.ts",
     "./custom_typings/**/*.d.ts",
     "./node_modules/@types/**/*.d.ts"
   ],
-  "exclude": [
-    "node_modules",
-    "jspm_packages",
-    "dist",
-    "build"
+  "include": [
+    "src/**/*.ts"
   ],
-  "atom": {
-    "rewriteTsconfig": false
-  }
+  "exclude": [
+    "node_modules"
+  ]
 }
