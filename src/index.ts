@@ -1,9 +1,11 @@
+import * as jwt from 'express-jwt';
+import * as jwks from 'jwks-rsa';
 import { IDebtsList } from './model';
 import { debts, users, debtsLists } from './data/debts';
 import * as express from 'express';
 import { Database, open } from 'sqlite';
 import * as cors from 'cors';
-import * as graphqlHTTP from 'express-graphql'
+import * as graphqlHTTP from 'express-graphql';
 import {
     // These are the basic GraphQL types
     GraphQLInt,
@@ -64,7 +66,7 @@ const Query = new GraphQLObjectType({
         debtsLists: {
             type: new GraphQLList(DebtsList),
             resolve: () => {
-                // database.all("SELECT * FROM DebtsLists");
+                // TODO: database.all("SELECT * FROM DebtsLists");
                 return debtsLists.map(debtsList => {
                     let totalAmount = debtsList.debts.reduce((a, b) => {
                         return a + b.amount;
@@ -149,6 +151,19 @@ const Schema = new GraphQLSchema({
 
 var app: express.Application = express();
 app.use(cors());
+var jwtCheck = jwt({
+    secret: jwks.expressJwtSecret({
+        cache: true,
+        rateLimit: true,
+        jwksRequestsPerMinute: 5,
+        jwksUri: "https://pranuel.eu.auth0.com/.well-known/jwks.json"
+    }),
+    audience: 'https://bla.de',
+    issuer: "https://pranuel.eu.auth0.com/",
+    algorithms: ['RS256']
+});
+
+app.use(jwtCheck);
 app.use('/graphql', graphqlHTTP({
     schema: Schema,
     graphiql: true
