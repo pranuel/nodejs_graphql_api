@@ -1,6 +1,6 @@
 import * as jwt from 'express-jwt';
 import * as jwks from 'jwks-rsa';
-import { IDebtsList } from './model';
+import { IDebtsList, IRequest } from './model';
 import { debts, users, debtsLists } from './data/debts';
 import * as express from 'express';
 import { Database, open } from 'sqlite';
@@ -30,7 +30,8 @@ const User = new GraphQLObjectType({
         firstName: { type: new GraphQLNonNull(GraphQLString) },
         lastName: { type: new GraphQLNonNull(GraphQLString) },
         authId: { type: new GraphQLNonNull(GraphQLString) },
-        photoUrl: { type: new GraphQLNonNull(GraphQLString) }
+        photoUrl: { type: new GraphQLNonNull(GraphQLString) },
+        sub: { type: new GraphQLNonNull(GraphQLString) }
     })
 });
 
@@ -65,7 +66,7 @@ const Query = new GraphQLObjectType({
     fields: () => ({
         debtsLists: {
             type: new GraphQLList(DebtsList),
-            resolve: () => {
+            resolve: (parentValue, args, request: IRequest) => {
                 // TODO: database.all("SELECT * FROM DebtsLists");
                 return debtsLists.map(debtsList => {
                     let totalAmount = debtsList.debts.reduce((a, b) => {
@@ -99,8 +100,8 @@ const Query = new GraphQLObjectType({
         },
         me: {
             type: User,
-            resolve: () => {
-                return database.all("SELECT * FROM Users LIMIT 1");
+            resolve: (parentValue, args, request: IRequest) => {
+                return database.get("SELECT * FROM Users WHERE sub = ?", request.user.sub);
             }
         }
     })
@@ -158,12 +159,16 @@ var jwtCheck = jwt({
         jwksRequestsPerMinute: 5,
         jwksUri: "https://pranuel.eu.auth0.com/.well-known/jwks.json"
     }),
-    audience: 'https://bla.de',
+    audience: 'https://iou.de',
     issuer: "https://pranuel.eu.auth0.com/",
     algorithms: ['RS256']
 });
 
 app.use(jwtCheck);
+app.get('/authorized', function (req, res) {
+    res.send('Secured Resource');
+});
+
 app.use('/graphql', graphqlHTTP({
     schema: Schema,
     graphiql: true
