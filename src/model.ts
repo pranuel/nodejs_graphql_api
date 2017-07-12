@@ -26,8 +26,6 @@ export interface IDebt {
 export interface IDebtsList {
     _id: string,
     title: string,
-    members: IUser[],
-    debts: IDebt[],
     totalAmount: number,
     lastTimestamp: number
 }

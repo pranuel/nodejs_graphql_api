@@ -1,7 +1,7 @@
 import * as jwt from 'express-jwt';
 import * as jwks from 'jwks-rsa';
-import { IDebtsList, IRequest } from './model';
-import { debts, users, debtsLists } from './data/debts';
+import { IDebtsList, IRequest, IDebt, IUser } from './model';
+import { debts, users } from './data/debts';
 import * as express from 'express';
 import { Database, open } from 'sqlite';
 import * as cors from 'cors';
@@ -66,24 +66,41 @@ const Query = new GraphQLObjectType({
     fields: () => ({
         debtsLists: {
             type: new GraphQLList(DebtsList),
-            resolve: (parentValue, args, request: IRequest) => {
+            resolve: async (parentValue, args, request: IRequest) => {
                 // TODO: database.all("SELECT * FROM DebtsLists");
-                return debtsLists.map(debtsList => {
-                    let totalAmount = debtsList.debts.reduce((a, b) => {
+                let debtsLists: IDebtsList[] = await database.all(`SELECT DebtsLists.*
+                                                                    FROM DebtsLists
+                                                                        JOIN DebtsListsMemberships
+                                                                            ON DebtsLists._id = DebtsListsMemberships.debtsListId
+                                                                        JOIN Users
+                                                                            ON Users._id = DebtsListsMemberships.userId
+                                                                    WHERE Users.sub = ?`, request.user.sub);
+
+                return debtsLists.map(async (debtsList) => {
+                    let debts: IDebt[] = await database.all(`SELECT *
+                                                                FROM Debts
+                                                                WHERE debtsListId = ?`, debtsList._id);
+                    let members: IUser[] = await database.all(`SELECT Users.*
+                                                                FROM Users
+                                                                    JOIN DebtsListsMemberships
+                                                                        ON Users._id = DebtsListsMemberships.userId
+                                                                WHERE DebtsListsMemberships.debtsListId = ?`, debtsList._id)
+                    let totalAmount = debts.reduce((a, b) => {
                         return a + b.amount;
                     }, 0);
-                    let timestamps = debtsList.debts.map(debt => {
+                    let timestamps = debts.map(debt => {
                         return debt.timestamp;
                     });
                     let lastTimestamp = Math.max(...timestamps);
                     return {
                         _id: debtsList._id,
-                        members: debtsList.members,
-                        debts: debtsList.debts,
+                        members: members,
+                        debts: debts,
                         totalAmount: totalAmount,
                         lastTimestamp: lastTimestamp
                     };
                 });
+
             }
         },
         debts: {
