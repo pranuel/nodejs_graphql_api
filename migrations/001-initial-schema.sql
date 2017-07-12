@@ -48,6 +48,8 @@ INSERT INTO Users (_id, firstName, lastName, photoUrl, sub) VALUES (2, "Christia
 INSERT INTO DebtsLists (_id, title) VALUES (1, "Test Debtslist");
 INSERT INTO DebtsListsMemberships (userId, debtsListId) VALUES (1, 1);
 INSERT INTO DebtsListsMemberships (userId, debtsListId) VALUES (2, 1);
+INSERT INTO Debts (_id, debtorId, creditorId, debtsListId, amount, timestamp, reason) VALUES (1, 1, 2, 1, 10, 1499877083798, "Test Debt 1");
+INSERT INTO Debts (_id, debtorId, creditorId, debtsListId, amount, timestamp, reason) VALUES (2, 2, 1, 1, 100, 1499877083799, "Test Debt 2");
 
 -- Down 
 DROP TABLE IF EXISTS DebtsListsMemberships;
