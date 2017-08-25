@@ -135,6 +135,13 @@ const DebtInput = new GraphQLInputObjectType({
     }
 });
 
+const DebtsListInput = new GraphQLInputObjectType({
+    name: 'DebtsListInput',
+    fields: {
+        title: { type: new GraphQLNonNull(GraphQLString) }
+    }
+})
+
 const Mutation = new GraphQLObjectType({
     name: "DebtsMutation",
     description: "Mutations of debts",
@@ -157,6 +164,15 @@ const Mutation = new GraphQLObjectType({
                 debts.push(debt);
 
                 return debt;
+            }
+        },
+        createDebtsList: {
+            type: DebtsList,
+            args: {
+                debtsListInput: { type: DebtsListInput }
+            },
+            resolve: (source, { title }) => {
+                return database.run("INSERT INTO DebtsLists (title) VALUES (?)", title)
             }
         }
     })
