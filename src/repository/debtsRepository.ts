@@ -6,7 +6,7 @@ export interface IDebtsRepository extends IRepository<IDebt> { }
 export class DebtsRepository extends BaseRepository<IDebt> {
 
     getAll(): Promise<IDebt[]> {
-        throw new Error("Method not implemented.");
+        return this.database.all("SELECT * FROM Debts");
     }
 
     get(id: string): Promise<IDebt> {
