@@ -4,14 +4,8 @@ import { IRequest, IUser } from './../model';
 import { Debt, User } from './types';
 
 import {
-    // These are the basic GraphQL types
-    GraphQLInt,
-    GraphQLFloat,
-    GraphQLString,
     GraphQLList,
-    GraphQLObjectType,
-    GraphQLEnumType,
-    GraphQLNonNull
+    GraphQLObjectType
 } from 'graphql';
 
 export function createRootQuery(userRepo: IUsersRepository, debtRepo: IDebtsRepository) {

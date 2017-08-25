@@ -4,17 +4,11 @@ import { IDebt } from './../model';
 import { Debt } from './types';
 
 import {
-    // These are the basic GraphQL types
-    GraphQLInt,
     GraphQLFloat,
     GraphQLString,
-    GraphQLList,
     GraphQLObjectType,
-    GraphQLEnumType,
     GraphQLNonNull,
-    GraphQLSchema,
     GraphQLInputObjectType,
-    graphql
 } from 'graphql';
 
 const DebtInput = new GraphQLInputObjectType({

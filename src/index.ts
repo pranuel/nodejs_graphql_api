@@ -6,7 +6,6 @@ import { createRootQuery } from './graphql/rootQuery';
 import * as jwt from 'express-jwt';
 import * as jwks from 'jwks-rsa';
 import { IRequest, IDebt, IUser } from './model';
-import { debts, users } from './data/debts';
 import * as express from 'express';
 import * as cors from 'cors';
 import * as graphqlHTTP from 'express-graphql';
