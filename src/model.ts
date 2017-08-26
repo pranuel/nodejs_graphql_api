@@ -16,8 +16,8 @@ export interface IUser {
 
 export interface IDebt {
     _id: string,
-    debtorId: string,
-    creditorId: string,
+    debtor: IUser,
+    creditor: IUser,
     amount: number,
     timestamp: number,
     reason: string
