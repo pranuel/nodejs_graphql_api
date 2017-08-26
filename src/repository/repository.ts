@@ -5,7 +5,7 @@ export interface IRepository<T> {
 
     getAll(): Promise<T[]>;
 
-    get(id: string): Promise<T>;
+    get(id: number): Promise<T>;
 
     update(id: string, data: T): Promise<T>;
 
@@ -25,7 +25,7 @@ export abstract class BaseRepository<T> implements IRepository<T> {
 
     abstract getAll(): Promise<T[]>;
 
-    abstract get(id: string): Promise<T>;
+    abstract get(id: number): Promise<T>;
 
     abstract update(id: string, data: T): Promise<T>;
 

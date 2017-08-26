@@ -27,7 +27,7 @@ export class DebtsRepository extends BaseRepository<IDebt> {
         });
     }
 
-    async get(id: string): Promise<IDebt> {
+    async get(id: number): Promise<IDebt> {
         let debtEntity = await this.database.get(this.baseQuery + "WHERE D._id = ?", id) as DebtEntity;
         return this.mapEntity(debtEntity);
     }
