@@ -7,7 +7,7 @@ export interface IRequest {
 }
 
 export interface IUser {
-    _id: string,
+    _id?: number,
     firstName: string,
     lastName: string,
     photoUrl: string,
@@ -15,7 +15,7 @@ export interface IUser {
 }
 
 export interface IDebt {
-    _id: string,
+    _id?: number,
     debtor: IUser,
     creditor: IUser,
     amount: number,
