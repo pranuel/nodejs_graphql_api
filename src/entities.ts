@@ -1,4 +1,4 @@
-export interface DebtEntity {
+export interface DebtOutputEntity {
     _id: number,
     amount: number,
     timestamp: number,
@@ -13,4 +13,12 @@ export interface DebtEntity {
     debtor_lastName: string,
     debtor_photoUrl: string,
     debtor_sub: string
+}
+
+export interface DebtInputEntity {
+    amount: number,
+    timestamp: number,
+    reason: string,
+    creditorId: number,
+    debtorId: number
 }
