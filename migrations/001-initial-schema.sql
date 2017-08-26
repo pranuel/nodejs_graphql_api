@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS Users
     firstName TEXT,
     lastName TEXT,
     photoUrl TEXT,
-    sub TEXT
+    sub TEXT UNIQUE
 );
 
 INSERT INTO Users (_id, firstName, lastName, photoUrl, sub) VALUES (1, "Manuel", "Pras", "https://avatars0.githubusercontent.com/u/1050461?v=3&u=b4c2487bbb40c032fb94a95e4af78c2760f48e75&s=400", "facebook|1080925881970593");
