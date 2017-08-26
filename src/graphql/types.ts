@@ -16,7 +16,6 @@ export const User = new GraphQLObjectType({
         _id: { type: new GraphQLNonNull(GraphQLString) },
         firstName: { type: new GraphQLNonNull(GraphQLString) },
         lastName: { type: new GraphQLNonNull(GraphQLString) },
-        authId: { type: new GraphQLNonNull(GraphQLString) },
         photoUrl: { type: new GraphQLNonNull(GraphQLString) },
         sub: { type: new GraphQLNonNull(GraphQLString) }
     })
