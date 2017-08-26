@@ -42,8 +42,8 @@ export function createRootMutation(databaseProvider: DatabaseProvider) {
                 resolve: (source, { debtorId, creditorId, timestamp, reason, amount }) => {
                     let debt: IDebt = {
                         _id: Math.round(Math.random() * 1000000000).toString(),
-                        debtorId: "1",
-                        creditorId: "2",
+                        debtor: null,
+                        creditor: null,
                         timestamp: timestamp,
                         reason: reason,
                         amount: amount
