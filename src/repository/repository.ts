@@ -9,7 +9,7 @@ export interface IRepository<T> {
 
     update(id: string, data: T): Promise<T>;
 
-    add(data: T): Promise<T>;
+    add(data): Promise<T>;
 
     delete(id: string): Promise<void>;
 
@@ -29,7 +29,7 @@ export abstract class BaseRepository<T> implements IRepository<T> {
 
     abstract update(id: string, data: T): Promise<T>;
 
-    abstract add(data: T): Promise<T>;
+    abstract add(data): Promise<T>;
 
     abstract delete(id: string): Promise<void>;
 

@@ -1,4 +1,4 @@
-import { DebtEntity } from './../entities';
+import { DebtOutputEntity, DebtInputEntity } from './../entities';
 import { IDebt } from './../model';
 import { IRepository, BaseRepository } from './repository';
 
@@ -21,14 +21,14 @@ export class DebtsRepository extends BaseRepository<IDebt> {
     }
 
     async getAll(): Promise<IDebt[]> {
-        let debtEntities = await this.database.all(this.baseQuery) as DebtEntity[];
+        let debtEntities = await this.database.all(this.baseQuery) as DebtOutputEntity[];
         return debtEntities.map(debtEntity => {
             return this.mapEntity(debtEntity);
         });
     }
 
     async get(id: number): Promise<IDebt> {
-        let debtEntity = await this.database.get(this.baseQuery + "WHERE D._id = ?", id) as DebtEntity;
+        let debtEntity = await this.database.get(this.baseQuery + "WHERE D._id = ?", id) as DebtOutputEntity;
         return this.mapEntity(debtEntity);
     }
 
@@ -36,15 +36,17 @@ export class DebtsRepository extends BaseRepository<IDebt> {
         throw new Error("Method not implemented.");
     }
 
-    add(data: IDebt): Promise<IDebt> {
-        throw new Error("Method not implemented.");
+    async add(data: DebtInputEntity): Promise<IDebt> {
+        let stmt = await this.database.run("INSERT INTO Debts (debtorId, creditorId, amount, timestamp, reason) VALUES (?, ?, ?, ?, ?);", data.debtorId, data.creditorId, data.amount, data.timestamp, data.reason);
+        let debt = await this.get(stmt.lastID);
+        return debt;
     }
 
     delete(id: string): Promise<void> {
         throw new Error("Method not implemented.");
     }
 
-    private mapEntity(debtEntity: DebtEntity): IDebt {
+    private mapEntity(debtEntity: DebtOutputEntity): IDebt {
         return {
             _id: debtEntity._id,
             debtor: {
