@@ -11,8 +11,9 @@ export class UsersRepository extends BaseRepository<IUser> {
         return this.database.all("SELECT * FROM Users");
     }
 
-    get(id: string): Promise<IUser> {
-        return this.database.get("SELECT * FROM Users WHERE _id = ?", id);
+    async get(id: number): Promise<IUser> {
+        let user = this.database.get("SELECT * FROM Users WHERE _id = ?", id);
+        return user;
     }
 
     getMe(sub: string): Promise<IUser> {
@@ -23,8 +24,10 @@ export class UsersRepository extends BaseRepository<IUser> {
         throw new Error("Method not implemented.");
     }
 
-    add(data: IUser): Promise<IUser> {
-        throw new Error("Method not implemented.");
+    async add(data: IUser): Promise<IUser> {
+        let stmt = await this.database.run("INSERT INTO Users (firstName, lastName, photoUrl, sub) VALUES (?, ?, ?, ?)", data.firstName, data.lastName, data.photoUrl, data.sub);
+        let user = await this.get(stmt.lastID);
+        return user;
     }
 
     delete(id: string): Promise<void> {
