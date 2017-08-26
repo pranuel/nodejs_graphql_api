@@ -1,7 +1,8 @@
-import { DatabaseProvider } from './../databaseProvider';
+import { IDebtsRepository } from "../repository/debtsRepository";
+import { IUsersRepository } from "../repository/usersRepository";
 import { Database } from 'sqlite';
-import { IDebt } from './../model';
-import { Debt } from './types';
+import { IDebt, IRequest, IUser } from './../model';
+import { Debt, User } from './types';
 
 import {
     GraphQLFloat,
@@ -10,7 +11,7 @@ import {
     GraphQLNonNull,
     GraphQLInputObjectType,
 } from 'graphql';
-
+    
 const DebtInput = new GraphQLInputObjectType({
     name: 'DebtInput',
     fields: {
@@ -22,14 +23,16 @@ const DebtInput = new GraphQLInputObjectType({
     }
 });
 
-const UserInput = new GraphQLInputObjectType({
-    name: 'UserInput',
+const MeInput = new GraphQLInputObjectType({
+    name: 'MeInput',
     fields: {
-        title: { type: new GraphQLNonNull(GraphQLString) }
+        firstName: { type: new GraphQLNonNull(GraphQLString) },
+        lastName: { type: new GraphQLNonNull(GraphQLString) },
+        photoUrl: { type: new GraphQLNonNull(GraphQLString) }
     }
 })
 
-export function createRootMutation(databaseProvider: DatabaseProvider) {
+export function createRootMutation(userRepo: IUsersRepository, debtRepo: IDebtsRepository) {
     const rootMutation = new GraphQLObjectType({
         name: "Mutations",
         description: "Mutations of debts and users",
@@ -39,9 +42,10 @@ export function createRootMutation(databaseProvider: DatabaseProvider) {
                 args: {
                     debtInput: { type: DebtInput }
                 },
-                resolve: (source, { debtorId, creditorId, timestamp, reason, amount }) => {
+                resolve: (source, args, request: IRequest) => {
+                    const { debtorId, creditorId, timestamp, reason, amount } = args.debtInput;
                     let debt: IDebt = {
-                        _id: Math.round(Math.random() * 1000000000).toString(),
+                        _id: Math.round(Math.random() * 1000000000),
                         debtor: null,
                         creditor: null,
                         timestamp: timestamp,
@@ -50,6 +54,22 @@ export function createRootMutation(databaseProvider: DatabaseProvider) {
                     };
     
                     return debt;
+                }
+            },
+            addMe: {
+                type: User,
+                args: {
+                    meInput: { type: MeInput }
+                },
+                resolve: (parentValue, args, request: IRequest) => {
+                    const { firstName, lastName, photoUrl } = args.meInput;
+                    let me: IUser = {
+                        firstName: firstName,
+                        lastName: lastName,
+                        photoUrl: photoUrl,
+                        sub: request.user.sub
+                    };
+                    return userRepo.add(me);
                 }
             }
         })

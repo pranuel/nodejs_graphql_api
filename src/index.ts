@@ -21,7 +21,7 @@ const debtsRepo = new DebtsRepository(databaseProvider);
 
 const Schema = new GraphQLSchema({
     query: createRootQuery(usersRepo, debtsRepo),
-    mutation: createRootMutation(databaseProvider)
+    mutation: createRootMutation(usersRepo, debtsRepo)
 });
 
 var app: express.Application = express();
