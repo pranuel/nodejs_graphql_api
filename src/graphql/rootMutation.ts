@@ -1,3 +1,4 @@
+import { DebtInputEntity } from './../entities';
 import { IDebtsRepository } from "../repository/debtsRepository";
 import { IUsersRepository } from "../repository/usersRepository";
 import { Database } from 'sqlite';
@@ -44,16 +45,15 @@ export function createRootMutation(userRepo: IUsersRepository, debtRepo: IDebtsR
                 },
                 resolve: (source, args, request: IRequest) => {
                     const { debtorId, creditorId, timestamp, reason, amount } = args.debtInput;
-                    let debt: IDebt = {
-                        _id: Math.round(Math.random() * 1000000000),
-                        debtor: null,
-                        creditor: null,
+                    let debt: DebtInputEntity = {
+                        debtorId: debtorId,
+                        creditorId: creditorId,
                         timestamp: timestamp,
                         reason: reason,
                         amount: amount
                     };
     
-                    return debt;
+                    return debtRepo.add(debt);
                 }
             },
             addMe: {
