@@ -3,6 +3,7 @@ import { BaseRepository, IRepository } from "./repository";
 
 export interface IUsersRepository extends IRepository<IUser> {
     getMe(sub: string): Promise<IUser>;
+    add(data: IUser): Promise<IUser>;
 }
 
 export class UsersRepository extends BaseRepository<IUser> {
