@@ -33,3 +33,12 @@ export const Debt = new GraphQLObjectType({
         amount: { type: new GraphQLNonNull(GraphQLFloat) }
     })
 });
+
+export const DebtsSummaryByUser = new GraphQLObjectType({
+    name: "DebtsSummaryByUser",
+    description: "Contains the summary of the debts between you and another user",
+    fields: () => ({
+        user: { type: new GraphQLNonNull(User) },
+        debtDifference: { type: new GraphQLNonNull(GraphQLFloat) }
+    })
+});

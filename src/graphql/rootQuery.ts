@@ -1,7 +1,7 @@
 import { IUsersRepository } from './../repository/usersRepository';
 import { IDebtsRepository } from "../repository/debtsRepository";
 import { IRequest, IUser } from './../model';
-import { Debt, User } from './types';
+import { Debt, User, DebtsSummaryByUser } from './types';
 
 import {
     GraphQLList,
@@ -28,6 +28,14 @@ export function createRootQuery(userRepo: IUsersRepository, debtRepo: IDebtsRepo
                 type: User,
                 resolve: (parentValue, args, request: IRequest) => {
                     return userRepo.getMe(request.user.sub);
+                }
+            },
+            debtsSummariesByUsers: {
+                type: DebtsSummaryByUser,
+                resolve: async (parentValue, args, request: IRequest) => {
+                    let me = await userRepo.getMe(request.user.sub);
+                    let debtsSummaries = await debtRepo.getAllGroupedByUser(me._id);
+                    return debtsSummaries;
                 }
             }
         })
