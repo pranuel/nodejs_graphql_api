@@ -4,7 +4,6 @@
   "description": "",
   "main": "index.js",
   "dependencies": {
-    "@types/express-graphql": "0.0.33",
     "bluebird": "^3.5.0",
     "cors": "^2.8.3",
     "express": "^4.15.3",
@@ -15,10 +14,20 @@
     "jwks-rsa": "^1.1.1",
     "sqlite": "^2.8.0"
   },
-  "devDependencies": {},
+  "devDependencies": {
+    "@types/chai": "^4.0.4",
+    "@types/express-graphql": "0.0.33",
+    "@types/mocha": "^2.2.42",
+    "chai": "^4.1.2",
+    "mocha": "^3.5.0",
+    "nodemon": "^1.11.0",
+    "ts-node": "^3.3.0",
+    "typescript": "^2.5.2"
+  },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "tsc && node dist/index.js"
+    "test": "mocha -r ts-node/register test/**/*.ts",
+    "build": "tsc",
+    "watch": "nodemon --watch src --exec 'tsc && ts-node --cache-directory .tscache' ./src/index.ts"
   },
   "author": "",
   "license": "ISC"
