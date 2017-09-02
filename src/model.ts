@@ -22,3 +22,8 @@ export interface IDebt {
     timestamp: number,
     reason: string
 }
+
+export interface IDebtsSummaryByUser {
+    user: IUser,
+    debtDifference: number
+}

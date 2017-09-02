@@ -1,5 +1,5 @@
 import { DebtOutputEntity, DebtInputEntity } from './../entities';
-import { IDebt } from './../model';
+import { IDebt, IDebtsSummaryByUser } from './../model';
 import { IRepository, BaseRepository } from './repository';
 
 export interface IDebtsRepository extends IRepository<IDebt> { }
@@ -30,6 +30,19 @@ export class DebtsRepository extends BaseRepository<IDebt> {
     async get(id: number): Promise<IDebt> {
         let debtEntity = await this.database.get(this.baseQuery + "WHERE D._id = ?", id) as DebtOutputEntity;
         return this.mapEntity(debtEntity);
+    }
+
+    async getAllGroupedByUser(ownUserId: string): Promise<IDebtsSummaryByUser[]> {
+        let debtsSummaryByUser = await this.database.get(`
+        SELECT
+        SUM(D.amount) as totalAmount, U.*
+        FROM Debts AS D
+        JOIN Users AS U
+        ON creditorId = U._id OR debtorId = U._id
+        WHERE NOT U._id = ?
+        GROUP BY U._id
+        `, ownUserId);
+        return debtsSummaryByUser;
     }
 
     update(id: string, data: IDebt): Promise<IDebt> {
