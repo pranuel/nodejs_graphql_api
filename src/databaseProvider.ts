@@ -1,6 +1,10 @@
 import { Database, open } from 'sqlite';
 
-export class DatabaseProvider {
+export interface IDatabaseProvider {
+    readonly database: Database;
+}
+
+export class DatabaseProvider implements IDatabaseProvider {
 
     private db: Database = null;
 
