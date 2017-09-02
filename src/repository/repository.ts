@@ -1,4 +1,4 @@
-import { DatabaseProvider } from './../databaseProvider';
+import { IDatabaseProvider } from './../databaseProvider';
 import { Database } from 'sqlite';
 
 export interface IRepository<T> {
@@ -7,17 +7,13 @@ export interface IRepository<T> {
 
     get(id: number): Promise<T>;
 
-    update(id: string, data: T): Promise<T>;
-
-    add(data): Promise<T>;
-
     delete(id: string): Promise<void>;
 
 }
 
 export abstract class BaseRepository<T> implements IRepository<T> {
 
-    constructor(private databaseProvider: DatabaseProvider) { }
+    constructor(private databaseProvider: IDatabaseProvider) { }
 
     protected get database(): Database {
         return this.databaseProvider.database;
@@ -26,10 +22,6 @@ export abstract class BaseRepository<T> implements IRepository<T> {
     abstract getAll(): Promise<T[]>;
 
     abstract get(id: number): Promise<T>;
-
-    abstract update(id: string, data: T): Promise<T>;
-
-    abstract add(data): Promise<T>;
 
     abstract delete(id: string): Promise<void>;
 

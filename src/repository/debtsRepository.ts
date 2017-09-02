@@ -1,8 +1,11 @@
-import { DebtOutputEntity, DebtInputEntity } from './../entities';
+import { DebtOutputEntity, DebtInputEntity, DebtsSummaryByUserEntity } from './../entities';
 import { IDebt, IDebtsSummaryByUser } from './../model';
 import { IRepository, BaseRepository } from './repository';
 
-export interface IDebtsRepository extends IRepository<IDebt> { }
+export interface IDebtsRepository extends IRepository<IDebt> {
+    getAllGroupedByUser(ownUserId: number): Promise<IDebtsSummaryByUser[]>;
+    add(data: DebtInputEntity): Promise<IDebt>;
+}
 
 export class DebtsRepository extends BaseRepository<IDebt> {
 
@@ -32,17 +35,27 @@ export class DebtsRepository extends BaseRepository<IDebt> {
         return this.mapEntity(debtEntity);
     }
 
-    async getAllGroupedByUser(ownUserId: string): Promise<IDebtsSummaryByUser[]> {
-        let debtsSummaryByUser = await this.database.get(`
+    async getAllGroupedByUser(ownUserId: number): Promise<IDebtsSummaryByUser[]> {
+        let debtsSummaryByUser: DebtsSummaryByUserEntity[] = await this.database.all(`
         SELECT
-        SUM(D.amount) as totalAmount, U.*
+        SUM(D.amount) as debtDifference, U.*
         FROM Debts AS D
         JOIN Users AS U
         ON creditorId = U._id OR debtorId = U._id
         WHERE NOT U._id = ?
         GROUP BY U._id
         `, ownUserId);
-        return debtsSummaryByUser;
+
+        return debtsSummaryByUser.map(d => ({
+            debtDifference: d.debtDifference,
+            user: {
+                _id: d._id,
+                firstName: d.firstName,
+                lastName: d.lastName,
+                photoUrl: d.photoUrl,
+                sub: d.sub
+            }
+        }));
     }
 
     update(id: string, data: IDebt): Promise<IDebt> {

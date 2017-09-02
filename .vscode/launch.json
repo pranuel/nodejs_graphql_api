@@ -8,10 +8,11 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
-            "program": "${workspaceRoot}/dist/index.js",
+            "program": "${workspaceRoot}/src/index.ts",
             "outFiles": [
-                "${workspaceRoot}/out/**/*.js"
-            ]
+                "${workspaceRoot}/dist/**/*.js"
+            ],
+            "preLaunchTask": "npm: build"
         }
     ]
 }

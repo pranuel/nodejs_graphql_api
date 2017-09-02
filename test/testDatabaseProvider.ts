@@ -1,10 +1,7 @@
 import { Database, open } from 'sqlite';
+import { IDatabaseProvider } from "../src/databaseProvider";
 
-export interface IDatabaseProvider {
-    readonly database: Database;
-}
-
-export class DatabaseProvider implements IDatabaseProvider {
+export class TestDatabaseProvider implements IDatabaseProvider {
 
     private db: Database = null;
 
@@ -14,7 +11,7 @@ export class DatabaseProvider implements IDatabaseProvider {
 
     initDatabase(): Promise<void> {
         // First, try to open the database:
-        return open('./database.sqlite3')
+        return open('./test_database.sqlite3')
             // Update db schema to the latest version using SQL-based migrations:
             .then(db => db.migrate({ force: 'last' }))
             .then(db => this.db = db)

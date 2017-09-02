@@ -1,3 +1,12 @@
+export interface DebtsSummaryByUserEntity {
+    debtDifference: number,
+    _id: number,
+    firstName: string,
+    lastName: string,
+    photoUrl: string,
+    sub: string
+}
+
 export interface DebtOutputEntity {
     _id: number,
     amount: number,
