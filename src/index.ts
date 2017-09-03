@@ -43,9 +43,15 @@ app.get('/authorized', function (req, res) {
     res.send('Secured Resource');
 });
 
-app.use('/graphql', graphqlHTTP({
-    schema: Schema,
-    graphiql: true
+app.use('/graphql', graphqlHTTP(request => {
+    const startTime = Date.now();
+    return {
+        schema: Schema,
+        graphiql: true,
+        extensions({ document, variables, operationName, result }) {
+            return { runTime: Date.now() - startTime };
+        }
+    }
 }));
 
 databaseProvider.initDatabase()
