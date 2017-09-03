@@ -31,7 +31,7 @@ export function createRootQuery(userRepo: IUsersRepository, debtRepo: IDebtsRepo
                 }
             },
             debtsSummariesByUsers: {
-                type: DebtsSummaryByUser,
+                type: new GraphQLList(DebtsSummaryByUser),
                 resolve: async (parentValue, args, request: IRequest) => {
                     let me = await userRepo.getMe(request.user.sub);
                     let debtsSummaries = await debtRepo.getAllGroupedByUser(me._id);
